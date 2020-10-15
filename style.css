@@ -27,6 +27,7 @@ html, body {
   }
 }
 .info {
+  display: none;
   transition: all 180ms ease-out;
   transform-style: preserve-3d;
   transform: perspective(800px);

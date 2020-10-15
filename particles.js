@@ -1,23 +1,14 @@
 
-var NUM_PARTICLES = ( ( ROWS = 250 ) * ( COLS = 400 ) ),
+var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     THICKNESS = Math.pow( 30, 3 ),
     LAZYNESS = 50,
     SPACING = 3,
-    MARGIN = 100,
+    MARGIN = 0.15,
     COLOR = 255,
     DRAG = 0.99,
     EASE = 0.2,
     NEEDS_TO_CLICK = false,
     
-    /*
-    
-    used for sine approximation, but Math.sin in Chrome is still fast enough :)http://jsperf.com/math-sin-vs-sine-approximation
-
-    B = 4 / Math.PI,
-    C = -4 / Math.pow( Math.PI, 2 ),
-    P = 0.225,
-
-    */
 
     container,
     particle,
@@ -46,8 +37,8 @@ particle = {
   y: 0
 };
 
-function init() {
 
+function init() {
   container = document.getElementById( 'container' );
   canvas = document.createElement( 'canvas' );
   
@@ -57,9 +48,15 @@ function init() {
   
   list = [];
   
-  w = canvas.width = COLS * SPACING + MARGIN * 2;
-  h = canvas.height = ROWS * SPACING + MARGIN * 2;
-  
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+
+  MARGIN = Math.min(w, h) * MARGIN;
+
+  COLS = Math.floor((w - 2 * MARGIN) / SPACING)
+  ROWS = Math.floor((h  - 2 * MARGIN) / SPACING)
+  NUM_PARTICLES = COLS * ROWS
+
   container.style.marginLeft = Math.round( w * -0.5 ) + 'px';
   container.style.marginTop = Math.round( h * -0.5 ) + 'px';
   
@@ -73,7 +70,6 @@ function init() {
   }
 
   container.addEventListener( 'mousemove', function(e) {
-
     bounds = container.getBoundingClientRect();
     mx = e.clientX - bounds.left;
     my = e.clientY - bounds.top;
