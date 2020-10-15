@@ -1,12 +1,13 @@
 
 var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
-    THICKNESS = Math.pow( 30, 3 ),
+    BASE_THICKNESS = Math.pow( 30, 3 ),
     LAZYNESS = 50,
     SPACING = 3,
     MARGIN = 0.15,
     COLOR = 255,
     DRAG = 0.99,
     EASE = 0.2,
+    BREATHING_SPEED = 0.1,
     NEEDS_TO_CLICK = false,
     
 
@@ -188,11 +189,14 @@ const line = (point1, point2) => {
   }
 }
 
+let stepCount = 0
 function step() {
 
   if ( stats ) stats.begin();
 
   if ( tog = !tog ) {
+    stepCount += 1
+    THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS)
 
     const mouseLine = man && mNew && line(mOld || mNew, mNew)
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
