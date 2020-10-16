@@ -7,7 +7,7 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     COLOR = 255,
     DRAG = 0.99,
     EASE = 0.2,
-    BREATHING_SPEED = 0.1,
+    BREATHING_SPEED = 0.0,
     NEEDS_TO_CLICK = false,
     
 
