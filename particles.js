@@ -11,7 +11,6 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     NEEDS_TO_CLICK = false,
     
 
-    canvas,
     mouse,
     stats,
     list,
@@ -24,7 +23,6 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     d, t, f,
     a, b,
     i, n,
-    w, h,
     s,
     r, c
     ;
@@ -36,10 +34,10 @@ const createParticle = () => ({
   y: 0
 })
 
-
+let width, height;
 function init() {
   const container = document.getElementById( 'particle-container' );
-  canvas = document.createElement( 'canvas' );
+  const canvas = document.createElement( 'canvas' );
   
   ctx = canvas.getContext( '2d' );
   man = false;
@@ -47,18 +45,18 @@ function init() {
   
   list = [];
   
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
 
-  MARGIN = Math.min(w, h) * MARGIN;
+  MARGIN = Math.min(width, height) * MARGIN;
 
-  COLS = Math.floor((w - 2 * MARGIN) / SPACING)
-  ROWS = Math.floor((h  - 2 * MARGIN) / SPACING)
+  COLS = Math.floor((width - 2 * MARGIN) / SPACING)
+  ROWS = Math.floor((height  - 2 * MARGIN) / SPACING)
   NUM_PARTICLES = COLS * ROWS
   console.log('Particles:', NUM_PARTICLES)
 
-  container.style.marginLeft = Math.round( w * -0.5 ) + 'px';
-  container.style.marginTop = Math.round( h * -0.5 ) + 'px';
+  container.style.marginLeft = Math.round( width * -0.5 ) + 'px';
+  container.style.marginTop = Math.round( height * -0.5 ) + 'px';
   
   for ( i = 0; i < NUM_PARTICLES; i++ ) {
     
@@ -107,10 +105,6 @@ function init() {
       mOld = mNew = null
       man = false
     })
-  }
-  
-  if ( typeof Stats === 'function' ) {
-    document.body.appendChild( ( stats = new Stats() ).domElement );
   }
   
   container.appendChild( canvas );
@@ -198,7 +192,7 @@ const setColor = (p, data) => {
   ]
   for (let x = p.x; x < p.x + PIXEL_SIZE; x++) {
     for (let y = p.y; y < p.y + PIXEL_SIZE; y++) {    
-      const n = ( ~~x + ( ~~y * w ) ) * 4
+      const n = ( ~~x + ( ~~y * width ) ) * 4
       data[n] = rgb[0]
       data[n+1] = rgb[1]
       data[n+2] = rgb[2]
@@ -244,7 +238,7 @@ function step() {
 
     mOld = null
   } else {
-    const image = ctx.createImageData( w, h )
+    const image = ctx.createImageData( width, height )
 
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
       setColor(list[i], image.data)
