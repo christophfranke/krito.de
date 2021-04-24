@@ -1,12 +1,12 @@
 
 var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
-    BASE_THICKNESS = Math.pow( 30, 3 ),
-    LAZYNESS = 50,
-    SPACING = 3,
-    MARGIN = 0.15,
+    BASE_THICKNESS = Math.pow( 15, 3 ),
+    LAZYNESS = 10,
+    SPACING = 8,
+    MARGIN = 0,
     COLOR = 255,
     DRAG = 0.99,
-    EASE = 0.2,
+    EASE = 0.25,
     BREATHING_SPEED = 0.0,
     NEEDS_TO_CLICK = false,
     
@@ -57,6 +57,7 @@ function init() {
   COLS = Math.floor((w - 2 * MARGIN) / SPACING)
   ROWS = Math.floor((h  - 2 * MARGIN) / SPACING)
   NUM_PARTICLES = COLS * ROWS
+  console.log('Particles:', NUM_PARTICLES)
 
   container.style.marginLeft = Math.round( w * -0.5 ) + 'px';
   container.style.marginTop = Math.round( h * -0.5 ) + 'px';
@@ -189,6 +190,25 @@ const line = (point1, point2) => {
   }
 }
 
+const FACTOR = 0.5
+const PIXEL_SIZE = 7
+const setColor = (p, data) => {
+  const rgb = [
+    COLOR / (1 + FACTOR * LA.norm({ x: p.vx, y: p.vy })),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vx)),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vy))
+  ]
+  for (let x = p.x; x < p.x + PIXEL_SIZE; x++) {
+    for (let y = p.y; y < p.y + PIXEL_SIZE; y++) {    
+      const n = ( ~~x + ( ~~y * w ) ) * 4
+      data[n] = rgb[0]
+      data[n+1] = rgb[1]
+      data[n+2] = rgb[2]
+      data[n+3] = 255;  
+    }
+  }
+}
+
 let stepCount = 0
 function step() {
 
@@ -230,22 +250,54 @@ function step() {
 
     mOld = null
   } else {
-    const FACTOR = 0.5
-    b = ( a = ctx.createImageData( w, h ) ).data;
+    const image = ctx.createImageData( w, h )
 
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
-
-      p = list[i];
-      const n = ( ~~p.x + ( ~~p.y * w ) ) * 4
-      // b[n] = COLOR / (1 + FACTOR * LA.norm({ x: p.vx, y: p.vy }))
-      // b[n+1] = COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vx))
-      // b[n+2] = COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vy))
-      b[n] = COLOR
-      b[n+1] = b[n+2] = COLOR / (1 + FACTOR * LA.norm({ x: p.vx, y: p.vy }))
-      b[n+3] = 255;
+      const p = list[i]
+      setColor(p, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 1,
+      //   y: p.y
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x,
+      //   y: p.y + 1
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 1,
+      //   y: p.y + 1
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 2,
+      //   y: p.y
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x,
+      //   y: p.y + 2
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 2,
+      //   y: p.y + 1
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 1,
+      //   y: p.y + 2
+      // }, image.data)
+      // setColor({
+      //   ...p,
+      //   x: p.x + 2,
+      //   y: p.y + 2
+      // }, image.data)
     }
 
-    ctx.putImageData( a, 0, 0 );
+    ctx.putImageData( image, 0, 0 );
   }
 
   if ( stats ) stats.end();
