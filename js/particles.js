@@ -33,7 +33,7 @@ const createParticle = () => ({
 })
 
 const initHandlers = (container) => {
-  container.addEventListener( 'mousemove', function(e) {
+  window.addEventListener( 'mousemove', function(e) {
     noMouseMoveCounter = 0
     bounds = container.getBoundingClientRect();
     mx = e.clientX - bounds.left;
@@ -57,7 +57,7 @@ const initHandlers = (container) => {
   });
 
   if (NEEDS_TO_CLICK) {  
-    container.addEventListener( 'mousedown', function(e) {
+    window.addEventListener( 'mousedown', function(e) {
       mx = e.clientX - bounds.left;
       my = e.clientY - bounds.top;
 
@@ -68,7 +68,7 @@ const initHandlers = (container) => {
       man = true;
     })
 
-    container.addEventListener( 'mouseup', function(e) {
+    window.addEventListener( 'mouseup', function(e) {
       mOld = mNew = null
       man = false
     })
