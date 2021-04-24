@@ -14,7 +14,6 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     mouse,
     stats,
     list,
-    ctx,
     tog,
     man,
     dx, dy,
@@ -34,39 +33,7 @@ const createParticle = () => ({
   y: 0
 })
 
-let width, height;
-function init() {
-  const container = document.getElementById( 'particle-container' );
-  const canvas = document.createElement( 'canvas' );
-  
-  ctx = canvas.getContext( '2d' );
-  man = false;
-  tog = true;
-  
-  list = [];
-  
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-
-  MARGIN = Math.min(width, height) * MARGIN;
-
-  COLS = Math.floor((width - 2 * MARGIN) / SPACING)
-  ROWS = Math.floor((height  - 2 * MARGIN) / SPACING)
-  NUM_PARTICLES = COLS * ROWS
-  console.log('Particles:', NUM_PARTICLES)
-
-  container.style.marginLeft = Math.round( width * -0.5 ) + 'px';
-  container.style.marginTop = Math.round( height * -0.5 ) + 'px';
-  
-  for ( i = 0; i < NUM_PARTICLES; i++ ) {
-    
-    p = createParticle();
-    p.x = p.ox = MARGIN + SPACING * ( i % COLS );
-    p.y = p.oy = MARGIN + SPACING * Math.floor( i / COLS );
-    
-    list[i] = p;
-  }
-
+const initHandlers = (container) => {
   container.addEventListener( 'mousemove', function(e) {
     bounds = container.getBoundingClientRect();
     mx = e.clientX - bounds.left;
@@ -105,9 +72,49 @@ function init() {
       mOld = mNew = null
       man = false
     })
-  }
+  }  
+}
+
+const initParticles = (container, canvas) => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+
+  MARGIN = Math.min(width, height) * MARGIN;
+
+  COLS = Math.floor((width - 2 * MARGIN) / SPACING)
+  ROWS = Math.floor((height  - 2 * MARGIN) / SPACING)
+  NUM_PARTICLES = COLS * ROWS
+  console.log('Particles:', NUM_PARTICLES)
+
+  container.style.marginLeft = Math.round( width * -0.5 ) + 'px';
+  container.style.marginTop = Math.round( height * -0.5 ) + 'px';
   
-  container.appendChild( canvas );
+  for ( i = 0; i < NUM_PARTICLES; i++ ) {
+    const particle = list[i] || createParticle()
+    particle.x = particle.ox = MARGIN + SPACING * ( i % COLS );
+    particle.y = particle.oy = MARGIN + SPACING * Math.floor( i / COLS );      
+    list[i] = particle;
+  }
+}
+
+let width, height, ctx;
+function init() {
+  const container = document.getElementById( 'particle-container' );
+  const canvas = document.createElement( 'canvas' );
+  
+  ctx = canvas.getContext( '2d' );
+  man = false;
+  tog = true;
+  
+  list = [];
+
+  initParticles(container, canvas)
+  initHandlers(container)
+  container.appendChild(canvas)
+
+  window.addEventListener('resize', () => {
+    initParticles(container, canvas)
+  })
 }
 
 const LA = {
@@ -184,14 +191,14 @@ const line = (point1, point2) => {
 
 const FACTOR = 0.25
 const PIXEL_SIZE = 7
-const setColor = (p, data) => {
+const setColor = (particle, data) => {
   const rgb = [
-    COLOR / (1 + FACTOR * LA.norm({ x: p.vx, y: p.vy })),
-    COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vx)),
-    COLOR / (1 + FACTOR * FACTOR * Math.abs(p.vy))
+    COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy))
   ]
-  for (let x = p.x; x < p.x + PIXEL_SIZE; x++) {
-    for (let y = p.y; y < p.y + PIXEL_SIZE; y++) {    
+  for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
+    for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
       const n = ( ~~x + ( ~~y * width ) ) * 4
       data[n] = rgb[0]
       data[n+1] = rgb[1]
