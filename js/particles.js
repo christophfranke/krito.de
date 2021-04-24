@@ -1,12 +1,12 @@
 
 var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     BASE_THICKNESS = Math.pow( 15, 3 ),
-    LAZYNESS = 10,
+    LAZYNESS = 70,
     SPACING = 8,
     MARGIN = 0,
     COLOR = 255,
     DRAG = 0.99,
-    EASE = 0.25,
+    EASE = 0.15,
     BREATHING_SPEED = 0.0,
     NEEDS_TO_CLICK = false,
     
