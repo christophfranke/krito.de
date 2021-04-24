@@ -23,8 +23,7 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     a, b,
     i, n,
     s,
-    r, c
-    ;
+    r, c;
 
 const createParticle = () => ({
   vx: 0,
@@ -35,6 +34,7 @@ const createParticle = () => ({
 
 const initHandlers = (container) => {
   container.addEventListener( 'mousemove', function(e) {
+    noMouseMoveCounter = 0
     bounds = container.getBoundingClientRect();
     mx = e.clientX - bounds.left;
     my = e.clientY - bounds.top;
@@ -97,16 +97,17 @@ const initParticles = (container, canvas) => {
   }
 }
 
-let width, height, ctx;
+let width, height, ctx, noMouseMoveCounter;
 function init() {
-  const container = document.getElementById( 'particle-container' );
-  const canvas = document.createElement( 'canvas' );
+  const container = document.getElementById( 'particle-container' )
+  const canvas = document.createElement( 'canvas' )
   
-  ctx = canvas.getContext( '2d' );
-  man = false;
-  tog = true;
+  ctx = canvas.getContext( '2d' )
+  man = false
+  tog = true
   
-  list = [];
+  list = []
+  noMouseMoveCounter = 0
 
   initParticles(container, canvas)
   initHandlers(container)
@@ -210,9 +211,11 @@ const setColor = (particle, data) => {
 
 let stepCount = 0
 function step() {
+  noMouseMoveCounter += 1
+
   if ( tog = !tog ) {
     stepCount += 1
-    THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS)
+    THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) / noMouseMoveCounter
 
     const mouseLine = man && mNew && line(mOld || mNew, mNew)
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
