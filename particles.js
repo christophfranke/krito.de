@@ -11,8 +11,6 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     NEEDS_TO_CLICK = false,
     
 
-    container,
-    particle,
     canvas,
     mouse,
     stats,
@@ -27,20 +25,20 @@ var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
     a, b,
     i, n,
     w, h,
-    p, s,
+    s,
     r, c
     ;
 
-particle = {
+const createParticle = () => ({
   vx: 0,
   vy: 0,
   x: 0,
   y: 0
-};
+})
 
 
 function init() {
-  container = document.getElementById( 'container' );
+  const container = document.getElementById( 'particle-container' );
   canvas = document.createElement( 'canvas' );
   
   ctx = canvas.getContext( '2d' );
@@ -64,7 +62,7 @@ function init() {
   
   for ( i = 0; i < NUM_PARTICLES; i++ ) {
     
-    p = Object.create( particle );
+    p = createParticle();
     p.x = p.ox = MARGIN + SPACING * ( i % COLS );
     p.y = p.oy = MARGIN + SPACING * Math.floor( i / COLS );
     
@@ -190,7 +188,7 @@ const line = (point1, point2) => {
   }
 }
 
-const FACTOR = 0.5
+const FACTOR = 0.25
 const PIXEL_SIZE = 7
 const setColor = (p, data) => {
   const rgb = [
@@ -211,20 +209,16 @@ const setColor = (p, data) => {
 
 let stepCount = 0
 function step() {
-
-  if ( stats ) stats.begin();
-
   if ( tog = !tog ) {
     stepCount += 1
     THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS)
 
     const mouseLine = man && mNew && line(mOld || mNew, mNew)
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      
-      p = list[i];
+      const particle = list[i];
 
       if (mouseLine) {
-        const { d, v, lineLenght } = mouseLine.distance(p)
+        const { d, v, lineLenght } = mouseLine.distance(particle)
         dx = v.x
         dy = v.y
         // d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
@@ -232,19 +226,19 @@ function step() {
 
         if ( d < THICKNESS ) {
           t = Math.atan2( dy, dx );
-          p.vx += f * Math.cos(t);
-          p.vy += f * Math.sin(t);
+          particle.vx += f * Math.cos(t);
+          particle.vy += f * Math.sin(t);
         }
       }
       
-      p.x += ( p.vx *= DRAG ) + (p.ox - p.x) * EASE;
-      p.y += ( p.vy *= DRAG ) + (p.oy - p.y) * EASE;
+      particle.x += ( particle.vx *= DRAG ) + (particle.ox - particle.x) * EASE;
+      particle.y += ( particle.vy *= DRAG ) + (particle.oy - particle.y) * EASE;
 
-      if (p.vx * (p.x - p.ox) < 0.01) {
-        p.x = p.ox
+      if (particle.vx * (particle.x - particle.ox) < 0.01) {
+        particle.x = particle.ox
       }
-      if (p.vy * (p.y - p.oy) < 0.01) {
-        p.y = p.oy
+      if (particle.vy * (particle.y - particle.oy) < 0.01) {
+        particle.y = particle.oy
       }
     }
 
@@ -253,54 +247,11 @@ function step() {
     const image = ctx.createImageData( w, h )
 
     for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      const p = list[i]
-      setColor(p, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 1,
-      //   y: p.y
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x,
-      //   y: p.y + 1
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 1,
-      //   y: p.y + 1
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 2,
-      //   y: p.y
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x,
-      //   y: p.y + 2
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 2,
-      //   y: p.y + 1
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 1,
-      //   y: p.y + 2
-      // }, image.data)
-      // setColor({
-      //   ...p,
-      //   x: p.x + 2,
-      //   y: p.y + 2
-      // }, image.data)
+      setColor(list[i], image.data)
     }
 
     ctx.putImageData( image, 0, 0 );
   }
-
-  if ( stats ) stats.end();
 
   requestAnimationFrame( step );
 }
