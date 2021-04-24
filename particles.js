@@ -84,7 +84,7 @@ const initParticles = (container, canvas) => {
   COLS = Math.floor((width - 2 * MARGIN) / SPACING)
   ROWS = Math.floor((height  - 2 * MARGIN) / SPACING)
   NUM_PARTICLES = COLS * ROWS
-  console.log('Particles:', NUM_PARTICLES)
+  // console.log('Particles:', NUM_PARTICLES)
 
   container.style.marginLeft = Math.round( width * -0.5 ) + 'px';
   container.style.marginTop = Math.round( height * -0.5 ) + 'px';
