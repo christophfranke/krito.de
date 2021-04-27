@@ -7,12 +7,12 @@ function isTouchDevice() {
 if (!isTouchDevice()) {
   var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
       BASE_THICKNESS = Math.pow( 15, 3 ),
-      LAZYNESS = 70,
+      LAZYNESS = 30,
       SPACING = 8,
       MARGIN = 0,
       COLOR = 255,
       DRAG = 0.99,
-      EASE = 0.15,
+      EASE = 0.5,
       BREATHING_SPEED = 0.0,
       
 
