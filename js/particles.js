@@ -6,12 +6,12 @@ function isTouchDevice() {
 
 if (!isTouchDevice()) {
   var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
-      BASE_THICKNESS = Math.pow( 15, 3 ),
-      LAZYNESS = 30,
+      BASE_THICKNESS = Math.pow( 45, 3 ),
+      LAZYNESS = 40,
       SPACING = 8,
       MARGIN = 0,
       COLOR = 255,
-      DRAG = 0.99,
+      DRAG = 0.97,
       EASE = 0.5,
       BREATHING_SPEED = 0.0,
       
@@ -23,7 +23,6 @@ if (!isTouchDevice()) {
       man,
       dx, dy,
       mOld, mNew,
-      d, t, f,
       a, b,
       i, n,
       s,
@@ -58,7 +57,7 @@ if (!isTouchDevice()) {
     }
 
     const move = (mx, my) => {
-      noMouseMoveCounter = 0
+      noMouseMoveCounter *= 0.9
       man = true
 
       if (tog) {    
@@ -96,9 +95,9 @@ if (!isTouchDevice()) {
     })
   }
 
-  const initParticles = (container, canvas) => {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+  const initParticles = (container, canvas, canvasBg) => {
+    width = canvas.width = canvasBg.width = window.innerWidth;
+    height = canvas.height = canvasBg.height = window.innerHeight;
 
     MARGIN = Math.min(width, height) * MARGIN;
 
@@ -118,26 +117,30 @@ if (!isTouchDevice()) {
     }
   }
 
-  let width, height, ctx, noMouseMoveCounter;
-  function init() {
-    const container = document.getElementById( 'particle-container' )
-    const canvas = document.createElement( 'canvas' )
+  let width, height, ctx, ctxBg, noMouseMoveCounter;
+  const init = () => {
+    const container = document.getElementById('particle-container')
+    const canvas = document.createElement('canvas')
+    const canvasBg = document.createElement('canvas')
     
-    ctx = canvas.getContext( '2d' )
+    ctx = canvas.getContext('2d')
+    ctxBg = canvasBg.getContext('2d')
     man = false
     tog = true
     
     list = []
     noMouseMoveCounter = 0
 
-    initParticles(container, canvas)
+    initParticles(container, canvas, canvasBg)
     initHandlers(container)
+    container.appendChild(canvasBg)
     container.appendChild(canvas)
 
     window.addEventListener('resize', () => {
-      initParticles(container, canvas)
+      initParticles(container, canvas, canvasBg)
     })
   }
+  init()
 
   const LA = {
     madd: (p1, m, p2) => ({
@@ -211,30 +214,9 @@ if (!isTouchDevice()) {
     }
   }
 
-  const FACTOR = 0.25
-  const PIXEL_SIZE = 7
-  const setColor = (particle, data) => {
-    const rgb = [
-      COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
-      COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
-      COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy))
-    ]
-    for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
-      for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
-        const n = ( ~~x + ( ~~y * width ) ) * 4
-        data[n] = rgb[0]
-        data[n+1] = rgb[1]
-        data[n+2] = rgb[2]
-        data[n+3] = 255;  
-      }
-    }
-  }
-
-  let stepCount = 0
-  function step() {
-    noMouseMoveCounter += 1
-
-    if ( tog = !tog ) {
+  let stopParticles = list
+  let startParticles = []
+  const updateParticles = () => {
       stepCount += 1
       THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) / noMouseMoveCounter
 
@@ -244,43 +226,149 @@ if (!isTouchDevice()) {
 
         if (mouseLine) {
           const { d, v, lineLenght } = mouseLine.distance(particle)
-          dx = v.x
-          dy = v.y
-          // d = ( dx = mx - p.x ) * dx + ( dy = my - p.y ) * dy;
-          f = -THICKNESS / (d + LAZYNESS);
+          const dx = v.x
+          const dy = v.y
+          const force = -THICKNESS / (d + LAZYNESS)
 
           if ( d < THICKNESS ) {
-            t = Math.atan2( dy, dx );
-            particle.vx += f * Math.cos(t);
-            particle.vy += f * Math.sin(t);
+            const tangent = Math.atan2( dy, dx )
+            particle.vx += force * Math.cos(tangent + 0.6 * Math.random() - 0.3)
+            particle.vy += force * Math.sin(tangent + 0.6 * Math.random() - 0.3)
+
+            if (!particle.isMoving) {
+              particle.isMoving = true
+              startParticles.push(particle)
+            }
           }
         }
-        
-        particle.x += ( particle.vx *= DRAG ) + (particle.ox - particle.x) * EASE;
-        particle.y += ( particle.vy *= DRAG ) + (particle.oy - particle.y) * EASE;
+
+        particle.vx *= DRAG
+        particle.vy *= DRAG
+
+        particle.x += particle.vx + (particle.ox - particle.x) * EASE;
+        particle.y += particle.vy + (particle.oy - particle.y) * EASE;
 
         if (particle.vx * (particle.x - particle.ox) < 0.01) {
           particle.x = particle.ox
+          particle.vx = 0
         }
         if (particle.vy * (particle.y - particle.oy) < 0.01) {
           particle.y = particle.oy
+          particle.vy = 0
+        }
+
+        if (particle.isMoving && particle.x === particle.ox && particle.y === particle.oy) {
+          particle.isMoving = false
+          stopParticles.push(particle)
         }
       }
 
       mOld = null
-    } else {
-      const image = ctx.createImageData( width, height )
-
-      for ( i = 0; i < NUM_PARTICLES; i++ ) {
-        setColor(list[i], image.data)
-      }
-
-      ctx.putImageData( image, 0, 0 );
-    }
-
-    requestAnimationFrame( step );
   }
 
-  init();
-  step();
+  const FACTOR = 0.25
+  const PIXEL_SIZE = 7
+  const getColor = (particle) => [
+    COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy))
+  ]
+  const setColor = (particle, data) => {
+    const rgb = getColor(particle)
+    for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
+      for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
+        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        data[n] = rgb[0]
+        data[n+1] = rgb[1]
+        data[n+2] = rgb[2]
+        data[n+3] = 255;  
+      }
+    }
+  }
+
+  // this is also slower than the other method
+  const drawImage = () => {
+      const image = ctx.createImageData(width, height)
+
+      list.forEach(particle => {
+        setColor(particle, image.data)
+      })
+
+      ctx.putImageData(image, 0, 0)
+  }
+
+  // this is slow!
+  const drawBoxes = () => {
+    ctx.clearRect(0, 0, width, height)
+    list.forEach(particle => {
+      const rgb = getColor(particle)
+      ctx.fillStyle = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'
+      ctx.fillRect(particle.x, particle.y, PIXEL_SIZE, PIXEL_SIZE)
+    })
+  }
+
+  const initColor = (particle, data) => {
+    for (let x = particle.ox; x < particle.x + PIXEL_SIZE; x++) {
+      for (let y = particle.oy; y < particle.y + PIXEL_SIZE; y++) {    
+        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        data[n] = 255
+        data[n+1] = 255
+        data[n+2] = 255
+        data[n+3] = 255;  
+      }
+    }
+  }
+  const removeColor = (particle, data) => {
+    for (let x = particle.ox; x < particle.ox + PIXEL_SIZE; x++) {
+      for (let y = particle.oy; y < particle.oy + PIXEL_SIZE; y++) {    
+        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        data[n] = 0
+        data[n+1] = 0
+        data[n+2] = 0
+        data[n+3] = 0
+      }
+    }    
+  }
+  let backgroundImage = ctxBg.createImageData(width, height)
+  const drawBackground = () => {
+    stopParticles.forEach(particle => {
+      initColor(particle, backgroundImage.data)
+    })
+    
+    startParticles.forEach(particle => {
+      removeColor(particle, backgroundImage.data)
+    })
+
+    ctxBg.putImageData(backgroundImage, 0, 0)
+  }
+
+  const drawForeground = () => {
+    const foregroundImage = ctx.createImageData(width, height)
+
+    list.forEach(particle => {
+      if (particle.isMoving) {
+        setColor(particle, foregroundImage.data)
+      }
+    })
+
+    ctx.putImageData(foregroundImage, 0, 0)    
+  }
+
+  let stepCount = 0
+  const step = () => {
+    noMouseMoveCounter = Math.min(noMouseMoveCounter + 1, BASE_THICKNESS)
+
+    if ( tog = !tog ) {
+      updateParticles()
+    } else {
+      drawBackground()
+      drawForeground()
+      stopParticles = []
+      startParticles = []
+    }
+
+    requestAnimationFrame(step)
+  }
+
+  step()
 }
