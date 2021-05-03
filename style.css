@@ -4,6 +4,8 @@
 html, body {
   background-color: #111;
   height: 100vh;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -28,8 +30,13 @@ html, body {
 
 .subtitle {
   margin: 0;
-  margin-top: -10vh;
-  font-size: 6vw;
+  margin-top: -4vh;
+  font-size: 5vw;
+}
+@media (min-height: 800px) {
+  .subtitle {
+    margin-top: -10vh;
+  }
 }
 @media (max-width: 500px) {
   .subtitle {
@@ -51,6 +58,11 @@ html, body {
   height: 3vw;
   width: auto;
   margin: 0 2vw;
+
+  transition: transform 0.3s;
+}
+.logo:hover {
+  transform: scale(1.1);
 }
 
 @media (max-width: 800px) {
