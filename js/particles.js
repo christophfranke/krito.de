@@ -36,17 +36,16 @@ const LA = {
 }
 
 if (!isTouchDevice()) {
-  var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
-      BASE_THICKNESS = Math.pow( 45, 3 ),
+  const BASE_THICKNESS = Math.pow( 45, 3 ),
       LAZYNESS = 40,
       SPACING = 8,
       MARGIN = 0,
       COLOR = 255,
       DRAG = 0.97,
       EASE = 0.5,
-      BREATHING_SPEED = 0.0,
-      
+      BREATHING_SPEED = 0.0
 
+  let NUM_PARTICLES,
       mouse,
       stats,
       list,
@@ -57,7 +56,7 @@ if (!isTouchDevice()) {
       a, b,
       i, n,
       s,
-      r, c;
+      r, c
 
   const createParticle = () => ({
     vx: 0,
@@ -79,19 +78,6 @@ if (!isTouchDevice()) {
       move(mx, my)
     }
 
-    const touchMove = e => {
-      e.stopPropagation()
-      e.preventDefault()
-
-      const bounds = container.getBoundingClientRect()
-      for (let i=0; i < e.touches.length; i++) {
-        const touch = e.touches.item(i)
-        const mx = touch.clientX - bounds.left
-        const my = touch.clientY - bounds.top
-        move(mx, my)
-      }
-    }
-
     const move = (mx, my) => {
       noMouseMoveCounter *= 0.9
       man = true
@@ -111,34 +97,24 @@ if (!isTouchDevice()) {
         }
       }    
     }
+
     window.addEventListener('mousemove', mouseMove)
-    window.addEventListener('touchmove', touchMove)
-
-    window.addEventListener( 'touchstart', function(e) {
-      const bounds = container.getBoundingClientRect()
-      const mx = e.clientX - bounds.left;
-      const my = e.clientY - bounds.top;
-
-      mOld = mNew = {
-        x: mx,
-        y: my
-      }
-    })
-
-    window.addEventListener( 'touchend', function(e) {
-      console.log('end')
-      mOld = mNew = null
-    })
+    // window.addEventListener('click', () => {
+    //   list.forEach(particle => {
+    //     shake(particle)
+    //   })
+    //   startParticles = list.filter(particle => particle.isMoving)
+    // })
   }
 
   const initParticles = (container, canvas, canvasBg) => {
     width = canvas.width = canvasBg.width = window.innerWidth;
     height = canvas.height = canvasBg.height = window.innerHeight;
 
-    MARGIN = Math.min(width, height) * MARGIN;
+    const marginInPx = Math.min(width, height) * MARGIN;
 
-    COLS = Math.floor((width - 2 * MARGIN) / SPACING)
-    ROWS = Math.floor((height  - 2 * MARGIN) / SPACING)
+    COLS = Math.floor((width - 2 * marginInPx) / SPACING)
+    ROWS = Math.floor((height  - 2 * marginInPx) / SPACING)
     NUM_PARTICLES = COLS * ROWS
     // console.log('Particles:', NUM_PARTICLES)
 
@@ -150,15 +126,17 @@ if (!isTouchDevice()) {
     for (i = 0; i < NUM_PARTICLES; i++) {
       if (list[i]) {
         const particle = list[i]
-        particle.ox = MARGIN + SPACING * ( i % COLS )
-        particle.oy = MARGIN + SPACING * Math.floor( i / COLS )
+        particle.ox = marginInPx + SPACING * ( i % COLS )
+        particle.oy = marginInPx + SPACING * Math.floor( i / COLS )
         if (!particle.isMoving && particle.ox !== particle.x || particle.oy !== particle.y) {
           particle.isMoving = true
+          particle.vx += 0.03 * (particle.x - particle.ox)
+          particle.vy += 0.03 * (particle.y - particle.oy)
         }
       } else {      
         const particle = createParticle()
-        particle.x = particle.ox = MARGIN + SPACING * ( i % COLS )
-        particle.y = particle.oy = MARGIN + SPACING * Math.floor( i / COLS )
+        particle.x = particle.ox = marginInPx + SPACING * ( i % COLS )
+        particle.y = particle.oy = marginInPx + SPACING * Math.floor( i / COLS )
         list[i] = particle
       }
     }
@@ -234,6 +212,15 @@ if (!isTouchDevice()) {
     return {
       distance
     }
+  }
+
+  SHAKE_WEIGHT = 0.005
+  const shake = (particle) => {
+    particle.x += SHAKE_WEIGHT * (Math.random() * width - 0.5 * width)
+    particle.y += SHAKE_WEIGHT * (Math.random() * height - 0.5 * height)
+    particle.vx += SHAKE_WEIGHT * (Math.random() * width - 0.5 * width)
+    particle.vy += SHAKE_WEIGHT * (Math.random() * height - 0.5 * height)
+    particle.isMoving = !(particle.x === particle.ox && particle.y === particle.oy)
   }
 
   const updateParticles = () => {
