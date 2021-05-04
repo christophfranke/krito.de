@@ -4,6 +4,37 @@ function isTouchDevice() {
      (navigator.msMaxTouchPoints > 0));
 }
 
+// Linear Algebra module
+const LA = {
+  madd: (p1, m, p2) => ({
+    x: p1.x + m * p2.x,
+    y: p1.y + m * p2.y
+  }),
+  multiply: (m, p1) => ({
+    x: m * p1.x,
+    y: m * p1.y
+  }),
+  subtract: (p1, p2) => ({
+    x: p1.x - p2.x,
+    y: p1.y - p2.y
+  }),
+  product: (p1, p2 = p1) => p1.x * p2.x + p1.y * p2.y,
+  rotate90: point => ({
+    x: -point.y,
+    y: point.x
+  }),
+  norm: point => Math.sqrt(LA.product(point, point)),
+  distance: (p1, p2) => LA.norm(LA.subtract(p1, p2)),
+  distanceSquared: (p1, p2) => LA.product(LA.subtract(p1, p2)),
+  normalize: point => {  
+    const length = LA.norm(point)
+    return {
+      x: point.x / length,
+      y: point.y / length
+    }
+  }
+}
+
 if (!isTouchDevice()) {
   var NUM_PARTICLES = ( ( ROWS = 'AUTO' ) * ( COLS = 'AUTO' ) ),
       BASE_THICKNESS = Math.pow( 45, 3 ),
@@ -32,8 +63,13 @@ if (!isTouchDevice()) {
     vx: 0,
     vy: 0,
     x: 0,
-    y: 0
+    y: 0,
+    isMoving: false
   })
+
+  let width, height, ctx, ctxBg, noMouseMoveCounter, backgroundImage;
+  let stopParticles = []
+  let startParticles = []
 
   const initHandlers = (container) => {
     const mouseMove = e => {
@@ -109,15 +145,29 @@ if (!isTouchDevice()) {
     container.style.marginLeft = Math.round( width * -0.5 ) + 'px';
     container.style.marginTop = Math.round( height * -0.5 ) + 'px';
     
-    for ( i = 0; i < NUM_PARTICLES; i++ ) {
-      const particle = list[i] || createParticle()
-      particle.x = particle.ox = MARGIN + SPACING * ( i % COLS );
-      particle.y = particle.oy = MARGIN + SPACING * Math.floor( i / COLS );      
-      list[i] = particle;
+    backgroundImage = ctxBg.createImageData(width, height)
+    list.length = NUM_PARTICLES
+    for (i = 0; i < NUM_PARTICLES; i++) {
+      if (list[i]) {
+        const particle = list[i]
+        particle.ox = MARGIN + SPACING * ( i % COLS )
+        particle.oy = MARGIN + SPACING * Math.floor( i / COLS )
+        if (!particle.isMoving && particle.ox !== particle.x || particle.oy !== particle.y) {
+          particle.isMoving = true
+        }
+      } else {      
+        const particle = createParticle()
+        particle.x = particle.ox = MARGIN + SPACING * ( i % COLS )
+        particle.y = particle.oy = MARGIN + SPACING * Math.floor( i / COLS )
+        list[i] = particle
+      }
     }
+
+    startParticles = []
+    stopParticles = list.filter(particle => !particle.isMoving)
+    tog = true
   }
 
-  let width, height, ctx, ctxBg, noMouseMoveCounter;
   const init = () => {
     const container = document.getElementById('particle-container')
     const canvas = document.createElement('canvas')
@@ -142,35 +192,7 @@ if (!isTouchDevice()) {
   }
   init()
 
-  const LA = {
-    madd: (p1, m, p2) => ({
-      x: p1.x + m * p2.x,
-      y: p1.y + m * p2.y
-    }),
-    multiply: (m, p1) => ({
-      x: m * p1.x,
-      y: m * p1.y
-    }),
-    subtract: (p1, p2) => ({
-      x: p1.x - p2.x,
-      y: p1.y - p2.y
-    }),
-    product: (p1, p2 = p1) => p1.x * p2.x + p1.y * p2.y,
-    rotate90: point => ({
-      x: -point.y,
-      y: point.x
-    }),
-    norm: point => Math.sqrt(LA.product(point, point)),
-    distance: (p1, p2) => LA.norm(LA.subtract(p1, p2)),
-    distanceSquared: (p1, p2) => LA.product(LA.subtract(p1, p2)),
-    normalize: point => {  
-      const length = LA.norm(point)
-      return {
-        x: point.x / length,
-        y: point.y / length
-      }
-    }
-  }
+
 
   const line = (point1, point2) => {
     const difference = LA.subtract(point2, point1)
@@ -214,8 +236,6 @@ if (!isTouchDevice()) {
     }
   }
 
-  let stopParticles = list
-  let startParticles = []
   const updateParticles = () => {
       stepCount += 1
       THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) / noMouseMoveCounter
@@ -286,30 +306,9 @@ if (!isTouchDevice()) {
     }
   }
 
-  // this is also slower than the other method
-  const drawImage = () => {
-      const image = ctx.createImageData(width, height)
-
-      list.forEach(particle => {
-        setColor(particle, image.data)
-      })
-
-      ctx.putImageData(image, 0, 0)
-  }
-
-  // this is slow!
-  const drawBoxes = () => {
-    ctx.clearRect(0, 0, width, height)
-    list.forEach(particle => {
-      const rgb = getColor(particle)
-      ctx.fillStyle = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'
-      ctx.fillRect(particle.x, particle.y, PIXEL_SIZE, PIXEL_SIZE)
-    })
-  }
-
   const initColor = (particle, data) => {
-    for (let x = particle.ox; x < particle.x + PIXEL_SIZE; x++) {
-      for (let y = particle.oy; y < particle.y + PIXEL_SIZE; y++) {    
+    for (let x = particle.ox; x < particle.ox + PIXEL_SIZE; x++) {
+      for (let y = particle.oy; y < particle.oy + PIXEL_SIZE; y++) {    
         const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
         data[n] = 255
         data[n+1] = 255
@@ -329,7 +328,7 @@ if (!isTouchDevice()) {
       }
     }    
   }
-  let backgroundImage = ctxBg.createImageData(width, height)
+
   const drawBackground = () => {
     stopParticles.forEach(particle => {
       initColor(particle, backgroundImage.data)
