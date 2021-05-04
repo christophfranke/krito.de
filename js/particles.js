@@ -342,7 +342,7 @@ if (!isTouchDevice()) {
 
   let stepCount = 0
   const step = () => {
-    noMouseMoveCounter = Math.min(noMouseMoveCounter + 1, BASE_THICKNESS)
+    noMouseMoveCounter += 1
 
     if ( tog = !tog ) {
       updateParticles()
