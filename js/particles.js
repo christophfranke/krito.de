@@ -274,7 +274,7 @@ if (!isTouchDevice()) {
   }
 
   const FACTOR = 0.25
-  const PIXEL_SIZE = 7
+  const PIXEL_SIZE = SPACING - 1
   const getColor = (particle) => [
     COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
     COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
