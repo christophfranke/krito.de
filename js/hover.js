@@ -11,15 +11,6 @@ window.addEventListener('load', () => {
       document.querySelectorAll(`.${logo}`).forEach(el => {
         el.src = `/logos/${logo}.svg`
       })      
-    } else {    
-      document.querySelectorAll(`.${logo}`).forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          el.src = `/logos/${logo}.svg`
-        })
-        el.addEventListener('mouseleave', () => {
-          el.src = `/logos/${logo}-white.svg`
-        })
-      })
     }
   })
 })

@@ -45,15 +45,31 @@ html, body {
   font-size: 3vw;
   line-height: 3vw;
 }
+
+
+.social-link:hover .logo {
+  transform: scale(1.15);
+}
 .logo {
+  will-change: transform;
+  transition: transform 0.3s;
   height: 3vw;
   width: auto;
   margin: 0 2vw;
-
-  transition: transform 0.3s;
+  display: block;
+  z-index: 1;
 }
-.logo:hover {
-  transform: scale(1.1);
+
+.logo.hover {
+  display: block;
+  position: absolute;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: transform 0.3s, opacity 0.3s;
+  z-index: 2;
+}
+.logo.hover:hover {
+  opacity: 1;
 }
 
 @media (max-width: 800px) {
