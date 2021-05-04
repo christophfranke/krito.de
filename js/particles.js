@@ -37,7 +37,7 @@ const LA = {
 
 if (!isTouchDevice()) {
   const BASE_THICKNESS = Math.pow( 15, 3 ),
-      MOUSE_MOSE_FACTOR = 25,
+      MOUSE_MOVE_FACTOR = 20,
       LAZYNESS = 30,
       SPACING = 5,
       MARGIN = 0,
@@ -81,7 +81,7 @@ if (!isTouchDevice()) {
     }
 
     const move = (mx, my) => {
-      noMouseMoveCounter = Math.max(0, Math.min(MOUSE_MOSE_FACTOR * THICKNESS, noMouseMoveCounter - 1.5))
+      noMouseMoveCounter = Math.max(0, Math.min(MOUSE_MOVE_FACTOR * THICKNESS, noMouseMoveCounter - 1.5))
       man = true
 
       if (tog) {    
@@ -100,7 +100,10 @@ if (!isTouchDevice()) {
       }    
     }
 
-    window.addEventListener('mousemove', mouseMove)
+    setTimeout(() => {
+      window.addEventListener('mousemove', mouseMove)
+      noMouseMoveCounter = MOUSE_MOVE_FACTOR * THICKNESS
+    }, 1000)
     // window.addEventListener('click', () => {
     //   list.forEach(particle => {
     //     shake(particle)
@@ -228,7 +231,7 @@ if (!isTouchDevice()) {
 
   const updateParticles = () => {
       stepCount += 1
-      THICKNESS = Math.max(Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) - MOUSE_MOSE_FACTOR * noMouseMoveCounter, 0)
+      THICKNESS = Math.max(Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) - MOUSE_MOVE_FACTOR * noMouseMoveCounter, 0)
 
       const mouseLine = man && mNew && line(mOld || mNew, mNew)
       if (mouseLine || numActiveParticles > 0) {
@@ -280,6 +283,7 @@ if (!isTouchDevice()) {
 
   const FACTOR = 0.25
   const PIXEL_SIZE = SPACING - 1
+  const getN = (x, y) => (Math.round(x) + Math.round(y) * width) * 4
   const getColor = (particle) => [
     COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
     COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
@@ -289,7 +293,7 @@ if (!isTouchDevice()) {
     const rgb = getColor(particle)
     for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
       for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
-        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        const n = getN(x, y)
         data[n] = rgb[0]
         data[n+1] = rgb[1]
         data[n+2] = rgb[2]
@@ -301,7 +305,7 @@ if (!isTouchDevice()) {
   const initColor = (particle, data) => {
     for (let x = particle.ox; x < particle.ox + PIXEL_SIZE; x++) {
       for (let y = particle.oy; y < particle.oy + PIXEL_SIZE; y++) {    
-        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        const n = getN(x, y)
         data[n] = 255
         data[n+1] = 255
         data[n+2] = 255
@@ -312,7 +316,7 @@ if (!isTouchDevice()) {
   const removeColor = (particle, data) => {
     for (let x = particle.ox; x < particle.ox + PIXEL_SIZE; x++) {
       for (let y = particle.oy; y < particle.oy + PIXEL_SIZE; y++) {    
-        const n = ( Math.round(x) + ( Math.round(y) * width ) ) * 4
+        const n = getN(x, y)
         data[n] = 0
         data[n+1] = 0
         data[n+2] = 0
