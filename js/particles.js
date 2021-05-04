@@ -36,9 +36,9 @@ const LA = {
 }
 
 if (!isTouchDevice()) {
-  const BASE_THICKNESS = Math.pow( 45, 3 ),
+  const BASE_THICKNESS = Math.pow( 30, 3 ),
       LAZYNESS = 40,
-      SPACING = 8,
+      SPACING = 5,
       MARGIN = 0,
       COLOR = 255,
       DRAG = 0.97,
