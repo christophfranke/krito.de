@@ -36,8 +36,9 @@ const LA = {
 }
 
 if (!isTouchDevice()) {
-  const BASE_THICKNESS = Math.pow( 30, 3 ),
-      LAZYNESS = 40,
+  const BASE_THICKNESS = Math.pow( 15, 3 ),
+      MOUSE_MOSE_FACTOR = 25,
+      LAZYNESS = 30,
       SPACING = 5,
       MARGIN = 0,
       COLOR = 255,
@@ -66,7 +67,8 @@ if (!isTouchDevice()) {
     isMoving: false
   })
 
-  let width, height, ctx, ctxBg, noMouseMoveCounter, backgroundImage;
+  let width, height, ctx, ctxBg, noMouseMoveCounter, backgroundImage
+  let numActiveParticles
   let stopParticles = []
   let startParticles = []
 
@@ -79,7 +81,7 @@ if (!isTouchDevice()) {
     }
 
     const move = (mx, my) => {
-      noMouseMoveCounter *= 0.9
+      noMouseMoveCounter = Math.max(0, Math.min(MOUSE_MOSE_FACTOR * THICKNESS, noMouseMoveCounter - 1.5))
       man = true
 
       if (tog) {    
@@ -141,6 +143,7 @@ if (!isTouchDevice()) {
       }
     }
 
+    numActiveParticles = NUM_PARTICLES
     startParticles = []
     stopParticles = list.filter(particle => !particle.isMoving)
     tog = true
@@ -225,49 +228,51 @@ if (!isTouchDevice()) {
 
   const updateParticles = () => {
       stepCount += 1
-      THICKNESS = Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) / noMouseMoveCounter
+      THICKNESS = Math.max(Math.abs(Math.cos(2 * Math.PI * BREATHING_SPEED * stepCount / 30.0) * BASE_THICKNESS) - MOUSE_MOSE_FACTOR * noMouseMoveCounter, 0)
 
       const mouseLine = man && mNew && line(mOld || mNew, mNew)
-      for ( i = 0; i < NUM_PARTICLES; i++ ) {
-        const particle = list[i];
+      if (mouseLine || numActiveParticles > 0) {
+        list.forEach(particle => {
+          if (mouseLine) {
+            const { d, v } = mouseLine.distance(particle)
 
-        if (mouseLine) {
-          const { d, v, lineLenght } = mouseLine.distance(particle)
-          const dx = v.x
-          const dy = v.y
-          const force = -THICKNESS / (d + LAZYNESS)
+            if ( d < THICKNESS ) {
+              const dx = v.x
+              const dy = v.y
+              const force = -THICKNESS / (d + LAZYNESS)
+              const tangent = Math.atan2( dy, dx )
+              particle.vx += force * Math.cos(tangent + 0.6 * Math.random() - 0.3)
+              particle.vy += force * Math.sin(tangent + 0.6 * Math.random() - 0.3)
 
-          if ( d < THICKNESS ) {
-            const tangent = Math.atan2( dy, dx )
-            particle.vx += force * Math.cos(tangent + 0.6 * Math.random() - 0.3)
-            particle.vy += force * Math.sin(tangent + 0.6 * Math.random() - 0.3)
-
-            if (!particle.isMoving) {
-              particle.isMoving = true
-              startParticles.push(particle)
+              if (!particle.isMoving) {
+                particle.isMoving = true
+                startParticles.push(particle)
+              }
             }
           }
-        }
 
-        particle.vx *= DRAG
-        particle.vy *= DRAG
+          if (particle.isMoving) {          
+            particle.vx *= DRAG
+            particle.vy *= DRAG
 
-        particle.x += particle.vx + (particle.ox - particle.x) * EASE;
-        particle.y += particle.vy + (particle.oy - particle.y) * EASE;
+            particle.x += particle.vx + (particle.ox - particle.x) * EASE;
+            particle.y += particle.vy + (particle.oy - particle.y) * EASE;
 
-        if (particle.vx * (particle.x - particle.ox) < 0.01) {
-          particle.x = particle.ox
-          particle.vx = 0
-        }
-        if (particle.vy * (particle.y - particle.oy) < 0.01) {
-          particle.y = particle.oy
-          particle.vy = 0
-        }
+            if (particle.vx * (particle.x - particle.ox) < 0.01) {
+              particle.x = particle.ox
+              particle.vx = 0
+            }
+            if (particle.vy * (particle.y - particle.oy) < 0.01) {
+              particle.y = particle.oy
+              particle.vy = 0
+            }
 
-        if (particle.isMoving && particle.x === particle.ox && particle.y === particle.oy) {
-          particle.isMoving = false
-          stopParticles.push(particle)
-        }
+            if (particle.x === particle.ox && particle.y === particle.oy) {
+              particle.isMoving = false
+              stopParticles.push(particle)
+            }
+          }
+        })
       }
 
       mOld = null
@@ -317,27 +322,33 @@ if (!isTouchDevice()) {
   }
 
   const drawBackground = () => {
-    stopParticles.forEach(particle => {
-      initColor(particle, backgroundImage.data)
-    })
-    
-    startParticles.forEach(particle => {
-      removeColor(particle, backgroundImage.data)
-    })
+    numActiveParticles += startParticles.length - stopParticles.length
 
-    ctxBg.putImageData(backgroundImage, 0, 0)
+    if (stopParticles.length > 0 || startParticles.length > 0) {    
+      stopParticles.forEach(particle => {
+        initColor(particle, backgroundImage.data)
+      })
+      
+      startParticles.forEach(particle => {
+        removeColor(particle, backgroundImage.data)
+      })
+
+      ctxBg.putImageData(backgroundImage, 0, 0)
+    }
   }
 
   const drawForeground = () => {
-    const foregroundImage = ctx.createImageData(width, height)
+    if (numActiveParticles > 0) {    
+      const foregroundImage = ctx.createImageData(width, height)
 
-    list.forEach(particle => {
-      if (particle.isMoving) {
-        setColor(particle, foregroundImage.data)
-      }
-    })
+      list.forEach(particle => {
+        if (particle.isMoving) {
+          setColor(particle, foregroundImage.data)
+        }
+      })
 
-    ctx.putImageData(foregroundImage, 0, 0)    
+      ctx.putImageData(foregroundImage, 0, 0)    
+    }
   }
 
   let stepCount = 0
