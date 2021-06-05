@@ -104,6 +104,7 @@ if (!isTouchDevice()) {
       window.addEventListener('mousemove', mouseMove)
       noMouseMoveCounter = MOUSE_MOVE_FACTOR * THICKNESS
     }, 1000)
+
     // window.addEventListener('click', () => {
     //   list.forEach(particle => {
     //     shake(particle)
@@ -220,7 +221,7 @@ if (!isTouchDevice()) {
     }
   }
 
-  SHAKE_WEIGHT = 0.005
+  SHAKE_WEIGHT = 0.025
   const shake = (particle) => {
     particle.x += SHAKE_WEIGHT * (Math.random() * width - 0.5 * width)
     particle.y += SHAKE_WEIGHT * (Math.random() * height - 0.5 * height)
@@ -281,13 +282,13 @@ if (!isTouchDevice()) {
       mOld = null
   }
 
-  const FACTOR = 0.25
+  const FACTOR = 0.4
   const PIXEL_SIZE = SPACING - 1
   const getN = (x, y) => (Math.round(x) + Math.round(y) * width) * 4
   const getColor = (particle) => [
     COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
     COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
-    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy))
+    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy)),
   ]
   const setColor = (particle, data) => {
     const rgb = getColor(particle)
