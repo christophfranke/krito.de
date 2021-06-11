@@ -129,11 +129,6 @@ export default () => {
         const particle = list[i]
         particle.ox = marginInPx + SPACING * ( i % COLS )
         particle.oy = marginInPx + SPACING * Math.floor( i / COLS )
-        if (!particle.isMoving && particle.ox !== particle.x || particle.oy !== particle.y) {
-          particle.isMoving = true
-          particle.vx += 0.03 * (particle.x - particle.ox)
-          particle.vy += 0.03 * (particle.y - particle.oy)
-        }
       } else {      
         const particle = createParticle()
         particle.x = particle.ox = marginInPx + SPACING * ( i % COLS )
@@ -168,6 +163,9 @@ export default () => {
 
     window.addEventListener('resize', () => {
       initParticles(container, canvas, canvasBg)
+      list.forEach(particle => {
+        shake(particle)
+      })
     })
   }
   init()
@@ -222,7 +220,14 @@ export default () => {
     particle.y += SHAKE_WEIGHT * (Math.random() * height - 0.5 * height)
     particle.vx += SHAKE_WEIGHT * (Math.random() * width - 0.5 * width)
     particle.vy += SHAKE_WEIGHT * (Math.random() * height - 0.5 * height)
+    const wasMoving = particle.isMoving
     particle.isMoving = !(particle.x === particle.ox && particle.y === particle.oy)
+    if (wasMoving && !particle.isMoving) {
+      stopParticles.push(particle)
+    }
+    if (!wasMoving && particle.isMoving) {
+      startParticles.push(particle)
+    }
   }
 
   const updateParticles = () => {

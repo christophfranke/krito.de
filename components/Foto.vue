@@ -27,6 +27,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.foto {
+  z-index: 1;
+  position: relative;
+}
 .image {
   display: block;
   width: 100%;
