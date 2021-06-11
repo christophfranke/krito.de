@@ -78,56 +78,61 @@ export default {
   margin: 0;
   margin-top: 10vh;
   font-size: 3vw;
+
+  @media (max-width: 800px) {
+    font-size: 6vw;
+  }
+
+  .navlink {
+    display: inline-block;
+    transition: transform .3s;
+    position: relative;
+    z-index: 0;
+
+    &:hover {
+      transform: scale(1.15);
+      z-index: 1;
+    }
+    
+    div {
+      display: inline-block;
+      color:  white;
+      text-decoration: none;
+      margin: 0 1vw;
+    }
+    .white {
+      background: white;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .colored {
+      background: linear-gradient(90deg, rgba(255,255,0,1) 0%, rgba(0,255,0,1) 50%, rgba(0,0,255,1) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0;
+      transition: opacity .3s;
+      position: absolute;
+    }
+
+    &:hover .colored, .touch-device & .colored {
+      opacity: 1;
+    }
+
+    div:before {
+      display: inline-block;
+      content:'→';
+      margin-right: 10px;
+      transition: margin .3s;
+    }
+
+    &:hover div:before {
+      margin-right: 0;
+      margin-left: 10px;
+    }
+  }
 }
 
-.navlink {
-  display: inline-block;
-  transition: transform .3s;
-  position: relative;
-  z-index: 0;
-
-  &:hover {
-    transform: scale(1.15);
-    z-index: 1;
-  }
-  
-  div {
-    display: inline-block;
-    color:  white;
-    text-decoration: none;
-    margin: 0 1vw;
-  }
-  .white {
-    background: white;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .colored {
-    background: linear-gradient(90deg, rgba(255,255,0,1) 0%, rgba(0,255,0,1) 50%, rgba(0,0,255,1) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    opacity: 0;
-    transition: opacity .3s;
-    position: absolute;
-  }
-
-  &:hover .colored {
-    opacity: 1;
-  }
-
-  div:before {
-    display: inline-block;
-    content:'→';
-    margin-right: 10px;
-    transition: margin .3s;
-  }
-
-  &:hover div:before {
-    margin-right: 0;
-    margin-left: 10px;
-  }
-}
 
 .description {
   margin: 0;
@@ -138,6 +143,10 @@ export default {
   display: flex;
   font-size: 3vw;
   line-height: 3vw;
+
+  @media (max-width: 800px) {
+    font-size: 8vw;
+  }
 }
 
 
@@ -158,7 +167,6 @@ export default {
     transform: scale(1.15);
   }
 
-
   @media (max-width: 800px) {
     height: 8vw;
   }
@@ -171,19 +179,9 @@ export default {
     will-change: transform, opacity;
     transition: transform 0.3s, opacity 0.3s;
     z-index: 2;
-    &:hover {
+    &:hover, .touch-device & {
       opacity: 1;
     }
-  }
-}
-
-
-@media (max-width: 800px) {
-  .links {
-    font-size: 8vw;
-  }
-  .logo {
-    height: 8vw;
   }
 }
 

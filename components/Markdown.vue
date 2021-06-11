@@ -17,19 +17,41 @@ export default {
 .markdown-content {
   font-size: 24px;
 
+  @media (max-width: 1000px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 700px) {
+    font-size: 18px;
+  }
+
   h1 {
     margin-top: 0;
     margin-bottom: 20px;
+
+    @media (max-width: 1000px) {
+      margin-bottom: 16px;
+    }
   }
 
   h2 {
     margin-top: 60px;
     margin-bottom: 20px;
+
+    @media (max-width: 1000px) {
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
   }
 
   h3 {
     margin-top: 40px;
     margin-bottom: 4px;
+
+    @media (max-width: 1000px) {
+      margin-top: 26px;
+      margin-bottom: 4px;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -39,6 +61,11 @@ export default {
   p {
     margin-top: 4px;
     margin-bottom: 20px;
+
+    @media (max-width: 1000px) {
+      margin-top: 4px;
+      margin-bottom: 16px;
+    }
   }
 
   p, ul, li {

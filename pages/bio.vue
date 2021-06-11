@@ -26,6 +26,9 @@ export default {
 <style lang="scss" scoped>
 .content {
   min-width: 70vw;
+  @media (max-width: 1200px) {
+    min-width: 90vw;
+  }
 }
 
 .portrait {
