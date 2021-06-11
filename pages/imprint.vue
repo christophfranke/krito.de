@@ -1,6 +1,7 @@
 <template>
   <Overlay>
     <div class="content">
+      <h1>Legal notice</h1>
       <Markdown :document="doc" />
     </div>
   </Overlay>

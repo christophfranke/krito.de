@@ -1,5 +1,3 @@
-# Bio
-
 ## About me
 I am a Berlin based musician and producer. Since 2005 I have been a part of independent and electronic music projects.
 

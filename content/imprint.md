@@ -1,5 +1,3 @@
-# Legal notice
-
 ## Website owner according to § 5 TMG
 
 Christoph Franke\

@@ -40,5 +40,8 @@ export default {
 .credits {
   font-family: 'Roboto', sans serif;
   font-size: 16px;
+  @media (max-width: 700px) {
+    font-size: 12px;
+  }
 } 
 </style>

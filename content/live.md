@@ -1,5 +1,3 @@
-# Live
-
 Unfortunately, the government has decided to shut down nearly all cultural live in favor of business and work during the pandemic. This is hurting our lives and the music industry deeply. Despite the tough situation, we were lucky to play a few shows.
 
 ## Upcoming

@@ -1,5 +1,3 @@
-# Productions
-
 ## Releases
 - Bergfilm [Open Home](https://open.spotify.com/album/2yrrjpnwtgdgSksJCu8itN) EP 2013
 - Bergfilm [Constants](https://open.spotify.com/album/5TR45QMGPA8JIqBhaOnIaY) Album 2017

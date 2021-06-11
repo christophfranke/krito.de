@@ -40,6 +40,11 @@
   padding: 20px;
   max-width: 90vw;
   max-height: 80vh;
+  @media (max-width: 500px) {
+    max-width: 100vw;
+    padding: 10px;
+    max-height: calc(100vh - 20px);
+  }
 }
 .close {
   font-family: "Bebas Neue", sans serif;
@@ -47,6 +52,10 @@
   position: absolute;
   top: 20px;
   right: 20px;
+  @media (max-width: 500px) {
+    top: 10px;
+    right: 10px;
+  }
   color: #333;
   z-index: 4;
   text-decoration: none;
