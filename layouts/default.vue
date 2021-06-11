@@ -1,42 +1,43 @@
 <template>
-  <div>
+  <div :class="mainClass">
     <Main />
-    <div id="particle-container"></div>
+    <Particles v-if="!isTouchDevice" />
     <nuxt />
   </div>
 </template>
 
 <script>
-import Main from '~/components/Main'
-import particles from '~/js/particles'
+import components from '~/components'
+import isTouchDevice from '~/js/isTouchDevice'
 
 export default {
-  components: {
-    Main,
+  components,
+
+  data () {
+    return {
+      isTouchDevice: false
+    }
   },
 
   mounted () {
-    particles()
+    this.isTouchDevice = isTouchDevice()
+  },
+
+  computed: {
+    mainClass() {
+      return {
+        'touch-device': this.isTouchDevice
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
 @import "~/style/global.scss";
-
-canvas {
-  position: absolute;
-}
 </style>
 
 <style lang="scss" scoped>
-#particle-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  pointer-events: none;
-}
-
 .page-enter-active,
 .page-leave-active {
   transition: opacity 0.2s;
