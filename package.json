@@ -1,0 +1,27 @@
+{
+  "name": "krito.de",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt generate",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christophfranke/krito.de.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christophfranke/krito.de/issues"
+  },
+  "homepage": "https://github.com/christophfranke/krito.de#readme",
+  "dependencies": {
+    "@nuxt/content": "^1.14.0",
+    "node-sass": "^6.0.0",
+    "nuxt": "^2.15.6",
+    "sass-loader": "^10.2.0"
+  }
+}
