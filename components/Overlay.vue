@@ -1,11 +1,23 @@
 <template>
-  <div class="background">
-    <div class="overlay" @mousemove.stop>
+  <div class="background" @click="home">
+    <div class="overlay" @mousemove.stop @click.stop>
       <nuxt-link class="close" to="/">Close</nuxt-link>
       <slot />
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    home () {
+      if (this.$route.name !== 'index') {
+        this.$router.push('/')
+      }
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 .overlay {
@@ -23,8 +35,6 @@
   left: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.7);
-
-  pointer-events: none;
 
   display: flex;
   justify-content: center;

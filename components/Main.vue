@@ -1,5 +1,5 @@
 <template>
-  <div class="content-container" @click="home">
+  <div class="content-container">
     <h1 class="krito">Krito</h1>
     <h2 class="subtitle">
       Electronic Music / Artist / Producer
@@ -29,23 +29,11 @@
         <img class="instagram logo white" src="/logos/instagram-white.svg">
       </a>
     </h2>
-    <nuxt-link to="/imprint" class="imprint" @click.stop>
+    <nuxt-link to="/imprint" class="imprint">
       Imprint
     </nuxt-link>
   </div>
 </template>
-
-<script>
-export default {
-  methods: {
-    home () {
-      if (this.$route.name !== 'index') {
-        this.$router.push('/')
-      }
-    }
-  }
-}
-</script>
 
 <style lang="scss" scoped>
 .content-container {
