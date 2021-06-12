@@ -11,4 +11,4 @@ Unfortunately, the government has decided to shut down nearly all cultural live 
 
 ## Booking
 
-For booking please write to [booking@krito.de](mailto:booking@krito.de).
+For booking please write to <Email encrypted=".ddoustmohukdnwe" />.

@@ -6,7 +6,7 @@ Amsterdamer Straße 18\
 
 ## Contact
 Phone: 0178 / 4139219\
-E-Mail: [krito@krito.de](mailto:krito@krito.de)
+E-Mail: <Email encrypted="ohukdmohukdnwe" />
 
 ## Privacy
 This website does not collect any data.
