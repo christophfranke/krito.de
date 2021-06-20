@@ -18,6 +18,7 @@ const LA = {
     y: point.x
   }),
   norm: point => Math.sqrt(LA.product(point, point)),
+  normV: particle => Math.sqrt(particle.vx * particle.vx + particle.vy * particle.vy),
   distance: (p1, p2) => LA.norm(LA.subtract(p1, p2)),
   distanceSquared: (p1, p2) => LA.product(LA.subtract(p1, p2)),
   normalize: point => {  
@@ -30,15 +31,16 @@ const LA = {
 }
 
 export default () => {
-  const BASE_THICKNESS = Math.pow( 15, 3 ),
+  const BASE_THICKNESS = Math.pow( 35, 3 ),
       MOUSE_MOVE_FACTOR = 20,
       LAZYNESS = 30,
-      SPACING = 5,
+      SPACING = 3,
       MARGIN = 0,
       COLOR = 255,
-      DRAG = 0.97,
-      EASE = 0.5,
+      DRAG = 0.90,
+      EASE = 0.7,
       BREATHING_SPEED = 0.0
+  const PIXEL_SIZE = 1
 
   let NUM_PARTICLES,
       THICKNESS,
@@ -271,6 +273,8 @@ export default () => {
               particle.vy = 0
             }
 
+            particle.color = getColor(particle)
+
             if (particle.x === particle.ox && particle.y === particle.oy) {
               particle.isMoving = false
               stopParticles.push(particle)
@@ -282,22 +286,20 @@ export default () => {
       mOld = null
   }
 
-  const FACTOR = 0.4
-  const PIXEL_SIZE = SPACING - 1
+  const FACTOR = 0.3
   const getN = (x, y) => (Math.round(x) + Math.round(y) * width) * 4
   const getColor = (particle) => [
-    COLOR / (1 + FACTOR * LA.norm({ x: particle.vx, y: particle.vy })),
+    COLOR / (1 + FACTOR * LA.normV(particle)),
     COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
     COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy)),
   ]
   const setColor = (particle, data) => {
-    const rgb = getColor(particle)
     for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
       for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
         const n = getN(x, y)
-        data[n] = rgb[0]
-        data[n+1] = rgb[1]
-        data[n+2] = rgb[2]
+        data[n] = particle.color[0]
+        data[n+1] = particle.color[1]
+        data[n+2] = particle.color[2]
         data[n+3] = 255;  
       }
     }
