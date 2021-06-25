@@ -38,7 +38,7 @@ export default () => {
       MARGIN = 0,
       COLOR = 255,
       DRAG = 0.92,
-      EASE = 0.1,
+      EASE = 0.05,
       BREATHING_SPEED = 0.0
   const PIXEL_SIZE = 1
 
@@ -286,12 +286,13 @@ export default () => {
       mOld = null
   }
 
-  const FACTOR = 0.3
+  const COLOR_FACTOR = 1
+  const RED_FACTOR = 5
   const getN = (x, y) => (Math.round(x) + Math.round(y) * width) * 4
   const getColor = (particle) => [
-    COLOR / (1 + FACTOR * LA.normV(particle)),
-    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vx)),
-    COLOR / (1 + FACTOR * FACTOR * Math.abs(particle.vy)),
+    COLOR / Math.sqrt(1 + RED_FACTOR * LA.normV(particle)),
+    COLOR / Math.sqrt(1 + COLOR_FACTOR * Math.abs(particle.vx)),
+    COLOR / Math.sqrt(1 + COLOR_FACTOR * Math.abs(particle.vy)),
   ]
   const setColor = (particle, data) => {
     for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
