@@ -31,14 +31,14 @@ const LA = {
 }
 
 export default () => {
-  const BASE_THICKNESS = Math.pow( 35, 3 ),
-      MOUSE_MOVE_FACTOR = 20,
-      LAZYNESS = 30,
+  const BASE_THICKNESS = Math.pow( 20, 3 ),
+      MOUSE_MOVE_FACTOR = 70,
+      LAZYNESS = 130,
       SPACING = 3,
       MARGIN = 0,
       COLOR = 255,
-      DRAG = 0.90,
-      EASE = 0.7,
+      DRAG = 0.92,
+      EASE = 0.1,
       BREATHING_SPEED = 0.0
   const PIXEL_SIZE = 1
 
@@ -78,7 +78,7 @@ export default () => {
     }
 
     const move = (mx, my) => {
-      noMouseMoveCounter = Math.max(0, Math.min(MOUSE_MOVE_FACTOR * THICKNESS, noMouseMoveCounter - 1.5))
+      noMouseMoveCounter = 0
       man = true
 
       if (tog) {    
@@ -297,6 +297,9 @@ export default () => {
     for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
       for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
         const n = getN(x, y)
+        if (!particle.color) {
+          particle.color = getColor(particle)
+        }
         data[n] = particle.color[0]
         data[n+1] = particle.color[1]
         data[n+2] = particle.color[2]
