@@ -31,14 +31,14 @@ const LA = {
 }
 
 export default () => {
-  const BASE_THICKNESS = Math.pow( 20, 3 ),
+  const BASE_THICKNESS = Math.pow( 16, 3 ),
       MOUSE_MOVE_FACTOR = 70,
       LAZYNESS = 130,
       SPACING = 3,
       MARGIN = 0,
       COLOR = 255,
-      DRAG = 0.92,
-      EASE = 0.05,
+      DRAG = 0.965,
+      EASE = 0.1,
       BREATHING_SPEED = 0.0
   const PIXEL_SIZE = 1
 
@@ -264,11 +264,11 @@ export default () => {
             particle.x += particle.vx + (particle.ox - particle.x) * EASE;
             particle.y += particle.vy + (particle.oy - particle.y) * EASE;
 
-            if (particle.vx * (particle.x - particle.ox) < 0.01) {
+            if (Math.abs(particle.vx * (particle.x - particle.ox)) < 0.01) {
               particle.x = particle.ox
               particle.vx = 0
             }
-            if (particle.vy * (particle.y - particle.oy) < 0.01) {
+            if (Math.abs(particle.vy * (particle.y - particle.oy)) < 0.01) {
               particle.y = particle.oy
               particle.vy = 0
             }
