@@ -33,14 +33,14 @@ const LA = {
 export default () => {
   const BASE_THICKNESS = Math.pow( 16, 3 ),
       MOUSE_MOVE_FACTOR = 70,
-      LAZYNESS = 130,
+      LAZYNESS = 1000,
       SPACING = 3,
       MARGIN = 0,
       COLOR = 255,
-      DRAG = 0.965,
-      EASE = 0.1,
+      DRAG = 0.9,
+      EASE = 0.01,
       BREATHING_SPEED = 0.0
-  const PIXEL_SIZE = 1
+  const PIXEL_SIZE = 2
 
   let NUM_PARTICLES,
       THICKNESS,
@@ -286,6 +286,8 @@ export default () => {
       mOld = null
   }
 
+  const inRange = (x, y) => x >= 0 && x < width && y >= 0 && y < height
+
   const COLOR_FACTOR = 1
   const RED_FACTOR = 5
   const getN = (x, y) => (Math.round(x) + Math.round(y) * width) * 4
@@ -296,15 +298,17 @@ export default () => {
   ]
   const setColor = (particle, data) => {
     for (let x = particle.x; x < particle.x + PIXEL_SIZE; x++) {
-      for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {    
-        const n = getN(x, y)
-        if (!particle.color) {
-          particle.color = getColor(particle)
+      for (let y = particle.y; y < particle.y + PIXEL_SIZE; y++) {
+        if (inRange(x,y )) {        
+          const n = getN(x, y)
+          if (!particle.color) {
+            particle.color = getColor(particle)
+          }
+          data[n] = particle.color[0]
+          data[n+1] = particle.color[1]
+          data[n+2] = particle.color[2]
+          data[n+3] = 255;  
         }
-        data[n] = particle.color[0]
-        data[n+1] = particle.color[1]
-        data[n+2] = particle.color[2]
-        data[n+3] = 255;  
       }
     }
   }
