@@ -169,6 +169,8 @@ export default () => {
         shake(particle)
       })
     })
+
+    document.body.style.backgroundColor = '#111'
   }
   init()
 
