@@ -9,7 +9,7 @@ export default {
   mounted () {
     particles()
   }  
-}  
+}
 </script>
 
 <style lang="scss">

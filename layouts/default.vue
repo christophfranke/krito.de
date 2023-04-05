@@ -21,6 +21,7 @@ export default {
 
   mounted () {
     this.isTouchDevice = isTouchDevice()
+    document.body.style.backgroundColor = '#111'
   },
 
   computed: {
