@@ -31,7 +31,7 @@ const LA = {
 }
 
 export default () => {
-  const BASE_THICKNESS = Math.pow( 16, 3 ),
+  const BASE_THICKNESS = Math.pow( 17, 3 ),
       MOUSE_MOVE_FACTOR = 70,
       LAZYNESS = 1000,
       SPACING = 3,
@@ -40,7 +40,7 @@ export default () => {
       DRAG = 0.9,
       EASE = 0.01,
       BREATHING_SPEED = 0.0
-  const PIXEL_SIZE = 2
+  const PIXEL_SIZE = 3
 
   let NUM_PARTICLES,
       THICKNESS,

@@ -1,9 +1,6 @@
 ## About me
 I am a Berlin based musician and producer. Since 2005 I have been a part of independent and electronic music projects.
 
-## Influences and Style
-My work as an artist is heavily influenced by High Energy Music from the early 1980s in New York and Europe, mashed with contemporary Techno styles and dreamy, dark, retro, funk, psychodelic, electronic music that is not purely functional for the dancefloor but tells a story of uniqueness and diversity.
-
 ## Projects
 
 ### Solo
@@ -21,10 +18,6 @@ I am currently working on my first solo EP with an upcoming release this summer.
 ### w/ Timo Pankau
 
 [Timo Pankau](https://timopankau.com/) is a traveller, singer, songwriter and guitar player. He is an extrovert introvert who manages to flip his mind inside out. We write and produce Dreamy Dark Folk songs.
-
-### w/ Fabian Kampa
-
-Fabian Kampa is my favourite electronic and acoustic drummer and songwriter from Cologne. Currently, we produce Electronic, Funky, Psychodelic tracks for our second EP.
 
 ## Past projects
 - Alcopulco: *Electronic Beats*, 2017 - 2020 [Admiral Midi (EP)](https://soundcloud.com/alcopulco/sets/admiral-midi)
